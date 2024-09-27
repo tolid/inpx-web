@@ -60,7 +60,11 @@
                 </div>
 
                 <div class="q-ml-sm clickable" @click.stop.prevent="emit('download')">
-                    (скачать)
+                    (скачать!)
+                </div>
+
+                <div class="q-ml-sm clickable" @click.stop.prevent="emit('downloadEpub')">
+                    (epub)
                 </div>
 
                 <div class="q-ml-sm clickable" @click.stop.prevent="emit('copyLink')">

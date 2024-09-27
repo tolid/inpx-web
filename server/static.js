@@ -61,7 +61,9 @@ module.exports = (app, config) => {
 
                         if (fileType === undefined || fileType === 'raw') {
                             bookFile = rawFile;
-                        } else if (fileType === 'zip') {
+                        }else if (fileType === 'epub'){
+                            throw new Error(`Unsupported file type EEEEEE`);
+                        }else if (fileType === 'zip') {
                             //создаем zip-файл
                             bookFile += '.zip';
                             if (!await fs.pathExists(bookFile))
