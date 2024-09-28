@@ -61,12 +61,27 @@ module.exports = (app, config) => {
 
                         if (fileType === undefined || fileType === 'raw') {
                             bookFile = rawFile;
-                        }else if (fileType === 'epub'){
-                            throw new Error(`Unsupported file type EEEEEE`);
+                        }else if (fileType === 'epub' || fileType === 'mobi' || fileType === 'azw3'){
+                            //перекодируем файл в нужный формат, используя fb2c
+                            bookFile += `.${fileType}`;
+                            if(!await fs.pathExists(bookFile)){
+                                if (config.fb2c.length > 0){
+                                    fb2File = rawFile.replace(/raw$/, 'fb2');                            
+                                    await fs.copyFile(rawFile, fb2File);
+                                    fb2c_cmd = `${config.fb2c} convert --to ${fileType} --nodirs --overwrite  ${fb2File}`;
+                                    (require('child_process')).execSync(fb2c_cmd, {
+                                        cwd: `${config.publicFilesDir}${config.bookPathStatic}`
+                                    });
+                                    await fs.remove(fb2File);
+                                    downFileName += `.${fileType}`;
+                                } else {
+                                    throw new Error('fb2c path is not configured');
+                                }
+                            }
                         }else if (fileType === 'zip') {
                             //создаем zip-файл
-                            bookFile += '.zip';
-                            if (!await fs.pathExists(bookFile))
+                            bookFile += '.zip';                            
+                            if (!await fs.pathExists(bookFile))                                
                                 await generateZip(bookFile, rawFile, downFileName);
                             downFileName += '.zip';
                         } else {
