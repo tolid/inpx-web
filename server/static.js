@@ -65,12 +65,10 @@ module.exports = (app, config) => {
                         gzipped = false;
 
                         if (fileType === undefined || fileType === 'raw') {
-                            bookFile = rawFile;
-                            log('Inside raw format');
+                            bookFile = rawFile;                            
                         }else if (fileType === 'epub' || fileType === 'mobi' || fileType === 'azw3'){
                             //перекодируем файл в нужный формат, используя fb2c
-                            bookFile += `.${fileType}`;
-                            log('Inside FB2C tool');
+                            bookFile += `.${fileType}`;                            
                             if(!await fs.pathExists(bookFile)){
                                 if (config.fb2c.length > 0){
                                     fb2File = rawFile.replace(/raw$/, 'fb2');                            
