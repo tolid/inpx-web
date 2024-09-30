@@ -163,18 +163,18 @@ export default class BaseList {
                 d.click();
             }else if (action == 'downloadEPUB') {
                 //скачивание epub                
-		        const d = this.$refs.download;
+                const d = this.$refs.download;
                 href += '/epub';		        
-		        d.href = href;
+                d.href = href;
 
-		        d.click();
+                d.click();
             } else if (action == 'downloadMOBI') {
                 //скачивание mobi 
-		        const d = this.$refs.download;
+                const d = this.$refs.download;
                 href += '/mobi';
-		        d.href = href;
+                d.href = href;
 
-		        d.click();
+                d.click();
             } else if (action == 'copyLink') {
                 //копирование ссылки
                 if (await utils.copyTextToClipboard(href))
