@@ -51,6 +51,11 @@ module.exports = (app, config) => {
                     let downFileName = (JSON.parse(desc)).downFileName;
                     let gzipped = true;
 
+                    //Fix downFileName extention for a file converted from fb2
+                    if (fileType === 'epub' || fileType === 'mobi' || fileType === 'azw3'){
+                        downFileName = downFileName.replace(/fb2$/, fileType)
+                    }
+
                     if (!req.acceptsEncodings('gzip') || fileType) {
                         const rawFile = `${bookFile}.raw`;
                         //не принимает gzip, тогда распакуем
@@ -61,9 +66,11 @@ module.exports = (app, config) => {
 
                         if (fileType === undefined || fileType === 'raw') {
                             bookFile = rawFile;
+                            log('Inside raw format');
                         }else if (fileType === 'epub' || fileType === 'mobi' || fileType === 'azw3'){
                             //перекодируем файл в нужный формат, используя fb2c
                             bookFile += `.${fileType}`;
+                            log('Inside FB2C tool');
                             if(!await fs.pathExists(bookFile)){
                                 if (config.fb2c.length > 0){
                                     fb2File = rawFile.replace(/raw$/, 'fb2');                            
@@ -72,8 +79,7 @@ module.exports = (app, config) => {
                                     (require('child_process')).execSync(fb2c_cmd, {
                                         cwd: `${config.publicFilesDir}${config.bookPathStatic}`
                                     });
-                                    await fs.remove(fb2File);
-                                    downFileName += `.${fileType}`;
+                                    await fs.remove(fb2File);                                    
                                 } else {
                                     throw new Error('fb2c path is not configured');
                                 }
@@ -88,7 +94,7 @@ module.exports = (app, config) => {
                             throw new Error(`Unsupported file type: ${fileType}`);
                         }
                     }
-
+                    
                     //отдача файла
                     if (gzipped)
                         res.set('Content-Encoding', 'gzip');
